@@ -7,16 +7,22 @@ import {
     Link,
     Button,
 } from "@nextui-org/react";
-
+import JoinRoom from "./JoinRoom";
 interface NavbarProps {
     setTheme: (theme: string) => void;
 }
 
 export default function App({ setTheme }: NavbarProps) {
     return (
-        <Navbar>
-            <NavbarBrand className="-ml-36">
-                <p className="text-2xl font-bold">Synapse</p>
+        <Navbar className="sticky">
+            <NavbarBrand>
+                <Link
+                    className="text-2xl font-bold"
+                    color="foreground"
+                    href="/"
+                >
+                    Synapse
+                </Link>
             </NavbarBrand>
 
             <NavbarContent className="hidden sm:flex gap-4" justify="center">
@@ -36,7 +42,7 @@ export default function App({ setTheme }: NavbarProps) {
                     </Link>
                 </NavbarItem>
             </NavbarContent>
-            <NavbarContent justify="end" className="flex -mr-40 gap-7">
+            <NavbarContent justify="end">
                 <NavbarItem>
                     <div className="flex items-center gap-2">
                         <Button
@@ -71,11 +77,11 @@ export default function App({ setTheme }: NavbarProps) {
                     </div>
                 </NavbarItem>
                 <NavbarItem className="hidden lg:flex">
-                    <Link href="#">Login</Link>
+                    <JoinRoom />
                 </NavbarItem>
                 <NavbarItem>
                     <Button as={Link} color="primary" href="#" variant="flat">
-                        Sign Up
+                        Create Room
                     </Button>
                 </NavbarItem>
             </NavbarContent>
