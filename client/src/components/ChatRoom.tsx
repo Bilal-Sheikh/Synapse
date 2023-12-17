@@ -1,15 +1,8 @@
-import {
-    Avatar,
-    Badge,
-    Button,
-    Card,
-    CardBody,
-    Input,
-    Textarea,
-} from "@nextui-org/react";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { Avatar, Button, Card, CardBody, Input } from "@nextui-org/react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { SocketContext } from "../providers/SocketContext";
 import { useSearchParams } from "react-router-dom";
+import { ArrowDown } from "lucide-react";
 
 interface Message {
     message: string;
@@ -19,15 +12,40 @@ interface Message {
 
 export default function ChatRoom() {
     const socket = useContext(SocketContext);
-
     if (!socket) return;
-    const [searchParams] = useSearchParams();
 
+    const ref = useRef<HTMLDivElement>(null);
+    const [isScrollingUp, setIsScrollingUp] = useState(false);
+    console.log(isScrollingUp);
+
+    const [searchParams] = useSearchParams();
     const [incomingMessages, setIncomingMessages] = useState<Message[]>([]);
     const [outgoingMessage, setOutgoingMessage] = useState("");
     const username = searchParams.get("user");
     const room = searchParams.get("room");
-    console.log("MESSAGES::::::::::::::::::::::::::::", incomingMessages);
+    // console.log("MESSAGES::::::::::::::::::::::::::::", incomingMessages);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => {
+            setIsScrollingUp(!entry.isIntersecting);
+        });
+
+        if (ref.current) {
+            observer.observe(ref.current);
+        }
+
+        if (isScrollingUp === false) {
+            handleScrollDown();
+        }
+
+        return () => observer.disconnect();
+    }, [incomingMessages]);
+
+    function handleScrollDown() {
+        if (ref.current) {
+            ref.current.scrollIntoView({ behavior: "instant" });
+        }
+    }
 
     useEffect(() => {
         socket.on("recieve_message", (data) => {
@@ -70,11 +88,11 @@ export default function ChatRoom() {
     }, []);
 
     return (
-        <div className="flex h-unit-9xl w-full">
+        <div className="flex h-[569px] w-full">
             <div className="flex flex-col w-3/4">
                 <div className="flex-grow overflow-auto p-4">
                     {incomingMessages.map((message, index) => (
-                        <div key={index}>
+                        <div ref={ref} key={index}>
                             {message.username === username ? (
                                 <div className="flex items-end gap-2 justify-end pt-4">
                                     <div className="rounded-lg bg-blue-500 text-white p-2">
@@ -107,8 +125,18 @@ export default function ChatRoom() {
                         </div>
                     ))}
                 </div>
-
-                <div className="w-3/4 fixed bottom-0 bg-background border-t p-5">
+                <div className="absolute bottom-28 left-1/3">
+                    {isScrollingUp && (
+                        <Button
+                            isIconOnly
+                            className="relative -left-1/3 rounded-full"
+                            onClick={handleScrollDown}
+                        >
+                            <ArrowDown size={17} />
+                        </Button>
+                    )}
+                </div>
+                <div className="w-3/4 fixed bottom-0  border-t p-5">
                     <div className="flex items-center space-x-2">
                         <Input
                             placeholder="Type your message here"
