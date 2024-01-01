@@ -1,8 +1,15 @@
-import { Avatar, Button, Card, CardBody, Input } from "@nextui-org/react";
+import {
+    Avatar,
+    Button,
+    Card,
+    CardBody,
+    Input,
+} from "@nextui-org/react";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { SocketContext } from "../providers/SocketContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowDown } from "lucide-react";
+import { toast } from "sonner";
 
 interface Message {
     message: string;
@@ -32,7 +39,7 @@ export default function ChatRoom() {
     const [outgoingMessage, setOutgoingMessage] = useState("");
     const [usersInRoom, setUsersInRoom] = useState<Users[]>([]);
 
-    // console.log("USERS::::::::::::::::::::::::::::", usersInRoom);
+    console.log("USERS::::::::::::::::::::::::::::", usersInRoom);
     // console.log("MESSAGES::::::::::::::::::::::::::::", incomingMessages);
 
     useEffect(() => {
@@ -59,14 +66,18 @@ export default function ChatRoom() {
 
     useEffect(() => {
         socket.on("recieve_message", (data) => {
-            setIncomingMessages((prevMesaages) => [
-                ...prevMesaages,
-                {
-                    message: data.message,
-                    username: data.username,
-                    time: data.time,
-                },
-            ]);
+            if (data.username === "🤖 BOT") {
+                return toast(data.message);
+            } else {
+                setIncomingMessages((prevMesaages) => [
+                    ...prevMesaages,
+                    {
+                        message: data.message,
+                        username: data.username,
+                        time: data.time,
+                    },
+                ]);
+            }
         });
 
         socket.on("users_in_Room", (data) => {
@@ -83,7 +94,7 @@ export default function ChatRoom() {
         socket?.emit("leave_room", {
             username: username,
             room: room,
-        });
+        }); 
         navigate("/");
     }
 

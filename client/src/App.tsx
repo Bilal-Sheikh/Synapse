@@ -4,6 +4,7 @@ import { useState } from "react";
 import Navbar from "./components/Navbar";
 import ChatRoom from "./components/ChatRoom";
 import io from "socket.io-client";
+import { Toaster } from "sonner";
 
 export default function App() {
     const [theme, setTheme] = useState(localStorage.getItem("theme"));
@@ -20,6 +21,7 @@ export default function App() {
             >
                 <div className="min-h-screen">
                     <Router>
+                        <Toaster position="top-center"  />
                         <Navbar setTheme={setTheme} />
                         <Routes>
                             <Route

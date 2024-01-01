@@ -8,13 +8,17 @@ import {
     Button,
 } from "@nextui-org/react";
 import JoinRoom from "./JoinRoom";
+import { useLocation } from "react-router-dom";
 interface NavbarProps {
     setTheme: (theme: string) => void;
 }
 
 export default function App({ setTheme }: NavbarProps) {
+    const location = useLocation();
+    const { pathname } = location;
+
     return (
-        <Navbar className="sticky border-b" >
+        <Navbar className="sticky border-b">
             <NavbarBrand>
                 <Link
                     className="text-2xl font-bold"
@@ -58,14 +62,26 @@ export default function App({ setTheme }: NavbarProps) {
                         </Button>
                     </div>
                 </NavbarItem>
-                <NavbarItem className="hidden lg:flex">
-                    <JoinRoom />
-                </NavbarItem>
-                <NavbarItem>
-                    <Button as={Link} color="primary" href="#" variant="flat">
-                        Create Room
-                    </Button>
-                </NavbarItem>
+
+                {pathname !== "/chat-room/chat" ? (
+                    <>
+                        <NavbarItem className="hidden lg:flex">
+                            <JoinRoom />
+                        </NavbarItem>
+                        <NavbarItem>
+                            <Button
+                                as={Link}
+                                color="primary"
+                                href="#"
+                                variant="flat"
+                            >
+                                Create Room
+                            </Button>
+                        </NavbarItem>
+                    </>
+                ) : (
+                    <></>
+                )}
             </NavbarContent>
         </Navbar>
     );

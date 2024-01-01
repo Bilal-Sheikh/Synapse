@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { createServer } from "http";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,8 +16,19 @@ const io = new Server(server, {
 });
 
 const BOT = "🤖 BOT";
-let users: { id: string; username: string; room: string }[] = [];
-let usersInRoom = [];
+
+interface User {
+    id: string;
+    username: string;
+    room: string;
+}
+
+let users: User[] = [];
+let usersInRoom: User[] = [];
+
+function leaveRoom(userId: string, roomUsers: User[]) {
+    return roomUsers.filter((user) => user.id !== userId);
+}
 
 io.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
@@ -58,13 +69,26 @@ io.on("connection", (socket) => {
     socket.on("leave_room", (data) => {
         const { username, room } = data;
         socket.leave(room);
-        users = users.filter((user) => user.id !== socket.id);
+        users = leaveRoom(socket.id, users);
         socket.to(room).emit("users_in_Room", users);
         socket.to(room).emit("recieve_message", {
             username: BOT,
             message: `${username} has left the room.`,
             time: Date.now(),
         });
+    });
+
+    socket.on("disconnect", () => {
+        const user = users.find((user) => user.id == socket.id);
+        if (user) {
+            users = leaveRoom(socket.id, users);
+            socket.to(user.room).emit("users_in_Room", users);
+            socket.to(user.room).emit("recieve_message", {
+                username: BOT,
+                message: `${user.username} has disconnected from the chat.`,
+                time: Date.now(),
+            });
+        }
     });
 });
 
