@@ -1,10 +1,4 @@
-import {
-    Avatar,
-    Button,
-    Card,
-    CardBody,
-    Input,
-} from "@nextui-org/react";
+import { Avatar, Button, Card, CardBody, Input } from "@nextui-org/react";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { SocketContext } from "../providers/SocketContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -38,9 +32,11 @@ export default function ChatRoom() {
     const [incomingMessages, setIncomingMessages] = useState<Message[]>([]);
     const [outgoingMessage, setOutgoingMessage] = useState("");
     const [usersInRoom, setUsersInRoom] = useState<Users[]>([]);
+    const [isHost, setIsHost] = useState(false);
 
-    console.log("USERS::::::::::::::::::::::::::::", usersInRoom);
+    // console.log("USERS::::::::::::::::::::::::::::", usersInRoom);
     // console.log("MESSAGES::::::::::::::::::::::::::::", incomingMessages);
+    console.log("HOSTTTTTTTTTTTTTTT", isHost);
 
     useEffect(() => {
         const observer = new IntersectionObserver(([entry]) => {
@@ -84,9 +80,16 @@ export default function ChatRoom() {
             setUsersInRoom(data);
         });
 
+        socket.on("check_host", (data) => {
+            if (data) {
+                setIsHost(true);
+            }
+        });
+
         return () => {
             socket.off("recieve_message");
             socket.off("users_in_Room");
+            socket.off("check_host");
         };
     }, [socket]);
 
@@ -94,7 +97,7 @@ export default function ChatRoom() {
         socket?.emit("leave_room", {
             username: username,
             room: room,
-        }); 
+        });
         navigate("/");
     }
 
@@ -213,6 +216,13 @@ export default function ChatRoom() {
                                     <div className="flex gap-2">
                                         <Avatar className="w-6 h-6" />
                                         <h3 className="font-bold">
+                                            {isHost && (
+                                                <>
+                                                    <span className="bg-blue-500">
+                                                        HOST
+                                                    </span>
+                                                </>
+                                            )}{" "}
                                             {user.username}
                                         </h3>
                                     </div>

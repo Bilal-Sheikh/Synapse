@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { createServer } from "http";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,9 +25,26 @@ interface User {
 
 let users: User[] = [];
 let usersInRoom: User[] = [];
+const currentTime = Date.now();
 
 function leaveRoom(userId: string, roomUsers: User[]) {
     return roomUsers.filter((user) => user.id !== userId);
+}
+
+function sendJoined(socket: Socket, room: string, username: string) {
+    socket.to(room).emit("recieve_message", {
+        username: BOT,
+        message: `${username} has joined the room.`,
+        time: currentTime,
+    });
+}
+
+function sendWelcome(socket: Socket, username: string) {
+    socket.emit("recieve_message", {
+        username: BOT,
+        message: `Welcome ${username}`,
+        time: currentTime,
+    });
 }
 
 io.on("connection", (socket) => {
@@ -38,19 +55,11 @@ io.on("connection", (socket) => {
         const { username, room } = data;
         socket.join(room);
 
-        const currentTime = Date.now(); // Send message to all clients in that specific room
-        socket.to(room).emit("recieve_message", {
-            username: BOT,
-            message: `${username} has joined the room.`,
-            time: currentTime,
-        });
+        // Send message to all clients in that specific room
+        sendJoined(socket, room, username);
 
         // Send welcome message to single user
-        socket.emit("recieve_message", {
-            username: BOT,
-            message: `Welcome ${username}`,
-            time: currentTime,
-        });
+        sendWelcome(socket, username);
 
         users.push({ id: socket.id, username, room });
         usersInRoom = users.filter((user) => user.room === room);
@@ -59,6 +68,22 @@ io.on("connection", (socket) => {
 
         // console.log(":USER:::::::::::::::::::::::", users);
         // console.log("INROOM::::::::::::::::::::::", usersInRoom);
+    });
+
+    socket.on("create_room", (data) => {
+        const { username, room } = data;
+        socket.join(room);
+
+        // Send message to all clients in that specific room
+        sendJoined(socket, room, username);
+
+        // Send welcome message to single user
+        sendWelcome(socket, username);
+
+        users.push({ id: socket.id, username, room });
+        usersInRoom = users.filter((user) => user.room === room);
+        socket.to(room).emit("users_in_Room", usersInRoom);
+        socket.emit("users_in_Room", usersInRoom);
     });
 
     socket.on("send_message", (data) => {

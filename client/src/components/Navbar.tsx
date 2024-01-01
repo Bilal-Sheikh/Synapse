@@ -9,6 +9,7 @@ import {
 } from "@nextui-org/react";
 import JoinRoom from "./JoinRoom";
 import { useLocation } from "react-router-dom";
+import CreateRoom from "./CreateRoom";
 interface NavbarProps {
     setTheme: (theme: string) => void;
 }
@@ -69,14 +70,7 @@ export default function App({ setTheme }: NavbarProps) {
                             <JoinRoom />
                         </NavbarItem>
                         <NavbarItem>
-                            <Button
-                                as={Link}
-                                color="primary"
-                                href="#"
-                                variant="flat"
-                            >
-                                Create Room
-                            </Button>
+                            <CreateRoom />
                         </NavbarItem>
                     </>
                 ) : (
