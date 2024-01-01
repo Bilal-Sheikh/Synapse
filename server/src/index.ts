@@ -16,7 +16,7 @@ const io = new Server(server, {
 });
 
 const BOT = "🤖 BOT";
-const users: { id: string; username: string; room: string }[] = [];
+let users: { id: string; username: string; room: string }[] = [];
 let usersInRoom = [];
 
 io.on("connection", (socket) => {
@@ -51,8 +51,20 @@ io.on("connection", (socket) => {
     });
 
     socket.on("send_message", (data) => {
-        const { username, room, message, time } = data;
+        const { room } = data;
         io.in(room).emit("recieve_message", data);
+    });
+
+    socket.on("leave_room", (data) => {
+        const { username, room } = data;
+        socket.leave(room);
+        users = users.filter((user) => user.id !== socket.id);
+        socket.to(room).emit("users_in_Room", users);
+        socket.to(room).emit("recieve_message", {
+            username: BOT,
+            message: `${username} has left the room.`,
+            time: Date.now(),
+        });
     });
 });
 

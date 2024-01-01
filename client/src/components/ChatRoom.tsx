@@ -32,7 +32,7 @@ export default function ChatRoom() {
     const [outgoingMessage, setOutgoingMessage] = useState("");
     const [usersInRoom, setUsersInRoom] = useState<Users[]>([]);
 
-    console.log("USERS::::::::::::::::::::::::::::", usersInRoom);
+    // console.log("USERS::::::::::::::::::::::::::::", usersInRoom);
     // console.log("MESSAGES::::::::::::::::::::::::::::", incomingMessages);
 
     useEffect(() => {
@@ -74,7 +74,7 @@ export default function ChatRoom() {
         });
 
         return () => {
-            socket.off("receive_message");
+            socket.off("recieve_message");
             socket.off("users_in_Room");
         };
     }, [socket]);
