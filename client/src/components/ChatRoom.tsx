@@ -30,12 +30,17 @@ export default function ChatRoom() {
     const [searchParams] = useSearchParams();
     const username = searchParams.get("user");
     const room = searchParams.get("room");
+
     const [incomingMessages, setIncomingMessages] = useState<Message[]>([]);
     const [outgoingMessage, setOutgoingMessage] = useState("");
     const [usersInRoom, setUsersInRoom] = useState<Users[]>([]);
-    // const [isHost, setIsHost] = useState(false);
 
-    console.log("USERS::::::::::::::::::::::::::::", usersInRoom);
+    const [typingUser, setTypingUser] = useState("");
+    setTimeout(() => {
+        setTypingUser("");
+    }, 5000);
+
+    // console.log("USERS::::::::::::::::::::::::::::", usersInRoom);
     // console.log("MESSAGES::::::::::::::::::::::::::::", incomingMessages);
     // console.log("HOSTTTTTTTTTTTTTTT", isHost);
 
@@ -81,10 +86,14 @@ export default function ChatRoom() {
             setUsersInRoom(data);
         });
 
+        socket.on("user_typing", (data) => {
+            setTypingUser(data.username);
+        });
+
         return () => {
             socket.off("recieve_message");
             socket.off("users_in_Room");
-            socket.off("check_host");
+            socket.off("user_typing");
         };
     }, [socket]);
 
@@ -105,9 +114,17 @@ export default function ChatRoom() {
                 message: outgoingMessage,
                 time: currentTime,
             });
+            setTypingUser("");
             setOutgoingMessage("");
         }
     }
+
+    const isTyping = useCallback(() => {
+        socket?.emit("is_typing", {
+            username: username,
+            room: room,
+        });
+    }, []);
 
     const formatTime = useCallback((time: string) => {
         const date = new Date(time);
@@ -179,6 +196,7 @@ export default function ChatRoom() {
                             placeholder="Type your message here"
                             onChange={(e) => {
                                 setOutgoingMessage(e.target.value);
+                                isTyping();
                             }}
                             value={outgoingMessage}
                             onKeyDown={(e) => {
@@ -189,12 +207,19 @@ export default function ChatRoom() {
                         />
                         <Button onClick={sendMessage}>Send</Button>
                     </div>
+                    {typingUser && (
+                        <p className="text-base mt-2 italic">
+                            {typingUser} is typing...
+                        </p>
+                    )}
                 </div>
             </div>
 
             <div className="w-1/4 p-4 border-l">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-2xl font-bold">Users</h2>
+                    <h2 className="text-2xl font-bold">
+                        Users: {usersInRoom.length}
+                    </h2>
                     <Button
                         onClick={handleLeaveRoom}
                         variant="solid"

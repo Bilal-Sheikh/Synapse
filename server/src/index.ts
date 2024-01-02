@@ -89,6 +89,11 @@ io.on("connection", (socket) => {
         io.in(room).emit("recieve_message", data);
     });
 
+    socket.on("is_typing", (data) => {
+        const { username, room } = data;
+        socket.to(room).emit("user_typing", { username });
+    });
+
     socket.on("leave_room", (data) => {
         const { username, room } = data;
         socket.leave(room);
