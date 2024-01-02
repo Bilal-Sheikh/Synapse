@@ -15,6 +15,7 @@ interface Users {
     id: string;
     room: string;
     username: string;
+    role: string;
 }
 
 export default function ChatRoom() {
@@ -32,11 +33,11 @@ export default function ChatRoom() {
     const [incomingMessages, setIncomingMessages] = useState<Message[]>([]);
     const [outgoingMessage, setOutgoingMessage] = useState("");
     const [usersInRoom, setUsersInRoom] = useState<Users[]>([]);
-    const [isHost, setIsHost] = useState(false);
+    // const [isHost, setIsHost] = useState(false);
 
-    // console.log("USERS::::::::::::::::::::::::::::", usersInRoom);
+    console.log("USERS::::::::::::::::::::::::::::", usersInRoom);
     // console.log("MESSAGES::::::::::::::::::::::::::::", incomingMessages);
-    console.log("HOSTTTTTTTTTTTTTTT", isHost);
+    // console.log("HOSTTTTTTTTTTTTTTT", isHost);
 
     useEffect(() => {
         const observer = new IntersectionObserver(([entry]) => {
@@ -78,12 +79,6 @@ export default function ChatRoom() {
 
         socket.on("users_in_Room", (data) => {
             setUsersInRoom(data);
-        });
-
-        socket.on("check_host", (data) => {
-            if (data) {
-                setIsHost(true);
-            }
         });
 
         return () => {
@@ -215,14 +210,14 @@ export default function ChatRoom() {
                                 <CardBody>
                                     <div className="flex gap-2">
                                         <Avatar className="w-6 h-6" />
-                                        <h3 className="font-bold">
-                                            {isHost && (
+                                        <h3 className="flex items-center justify-center font-bold">
+                                            {user.role === "ADMIN" && (
                                                 <>
-                                                    <span className="bg-blue-500">
-                                                        HOST
+                                                    <span className="mr-1">
+                                                        👑
                                                     </span>
                                                 </>
-                                            )}{" "}
+                                            )}
                                             {user.username}
                                         </h3>
                                     </div>

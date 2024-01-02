@@ -17,10 +17,16 @@ const io = new Server(server, {
 
 const BOT = "🤖 BOT";
 
+enum ROLE {
+    ADMIN = "ADMIN",
+    USER = "USER",
+}
+
 interface User {
     id: string;
     username: string;
     room: string;
+    role: ROLE;
 }
 
 let users: User[] = [];
@@ -50,37 +56,29 @@ function sendWelcome(socket: Socket, username: string) {
 io.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
 
-    // Add user to room
     socket.on("join_room", (data) => {
         const { username, room } = data;
         socket.join(room);
 
-        // Send message to all clients in that specific room
         sendJoined(socket, room, username);
 
-        // Send welcome message to single user
         sendWelcome(socket, username);
 
-        users.push({ id: socket.id, username, room });
+        users.push({ id: socket.id, username, room, role: ROLE.USER });
         usersInRoom = users.filter((user) => user.room === room);
         socket.to(room).emit("users_in_Room", usersInRoom);
         socket.emit("users_in_Room", usersInRoom);
-
-        // console.log(":USER:::::::::::::::::::::::", users);
-        // console.log("INROOM::::::::::::::::::::::", usersInRoom);
     });
 
     socket.on("create_room", (data) => {
         const { username, room } = data;
         socket.join(room);
 
-        // Send message to all clients in that specific room
         sendJoined(socket, room, username);
 
-        // Send welcome message to single user
         sendWelcome(socket, username);
 
-        users.push({ id: socket.id, username, room });
+        users.push({ id: socket.id, username, room, role: ROLE.ADMIN });
         usersInRoom = users.filter((user) => user.room === room);
         socket.to(room).emit("users_in_Room", usersInRoom);
         socket.emit("users_in_Room", usersInRoom);
