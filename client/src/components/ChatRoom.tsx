@@ -179,7 +179,7 @@ export default function ChatRoom() {
                     ))}
                 </div>
 
-                <div className="w-3/4 fixed bottom-0 bg-background border-t p-5">
+                <div className="w-3/4 fixed bottom-0 bg-background p-5">
                     <div className="absolute -top-20 left-1/2">
                         {isScrollingUp && (
                             <Button
