@@ -2,8 +2,14 @@ import { Avatar, Button, Card, CardBody, Input } from "@nextui-org/react";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { SocketContext } from "../providers/SocketContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
+import {
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
+} from "@nextui-org/react";
 
 interface Message {
     message: string;
@@ -18,10 +24,22 @@ interface Users {
     role: string;
 }
 
+interface UsersInRoom {
+    room: string;
+    users: Users[];
+}
+
 export default function ChatRoom() {
     const navigate = useNavigate();
     const socket = useContext(SocketContext);
     if (!socket) return;
+
+    const data = localStorage.getItem("data");
+    let role: string;
+    if (data) {
+        const parsedData = JSON.parse(data);
+        role = parsedData.role;
+    }
 
     const ref = useRef<HTMLDivElement>(null);
     const [isScrollingUp, setIsScrollingUp] = useState(false);
@@ -33,7 +51,8 @@ export default function ChatRoom() {
 
     const [incomingMessages, setIncomingMessages] = useState<Message[]>([]);
     const [outgoingMessage, setOutgoingMessage] = useState("");
-    const [usersInRoom, setUsersInRoom] = useState<Users[]>([]);
+    const [usersInRoom, setUsersInRoom] = useState<UsersInRoom>();
+    console.log("USERS:::::", usersInRoom);
 
     const [typingUser, setTypingUser] = useState("");
     setTimeout(() => {
@@ -42,7 +61,6 @@ export default function ChatRoom() {
 
     // console.log("USERS::::::::::::::::::::::::::::", usersInRoom);
     // console.log("MESSAGES::::::::::::::::::::::::::::", incomingMessages);
-    // console.log("HOSTTTTTTTTTTTTTTT", isHost);
 
     useEffect(() => {
         const observer = new IntersectionObserver(([entry]) => {
@@ -82,12 +100,18 @@ export default function ChatRoom() {
             }
         });
 
-        socket.on("users_in_Room", (data) => {
-            setUsersInRoom(data);
+        socket.on("users_in_Room", (data: UsersInRoom[]) => {
+            const currentRoom = data.find((roomid) => roomid.room === room);
+            setUsersInRoom(currentRoom);
         });
 
         socket.on("user_typing", (data) => {
             setTypingUser(data.username);
+        });
+
+        socket.on("kicked", (data) => {
+            toast(data.message);
+            navigate("/");
         });
 
         return () => {
@@ -96,14 +120,6 @@ export default function ChatRoom() {
             socket.off("user_typing");
         };
     }, [socket]);
-
-    function handleLeaveRoom() {
-        socket?.emit("leave_room", {
-            username: username,
-            room: room,
-        });
-        navigate("/");
-    }
 
     function sendMessage() {
         if (outgoingMessage.trim().length > 0) {
@@ -117,6 +133,23 @@ export default function ChatRoom() {
             setTypingUser("");
             setOutgoingMessage("");
         }
+    }
+
+    function handleLeaveRoom() {
+        socket?.emit("leave_room", {
+            userId: socket.id,
+            username: username,
+            room: room,
+        });
+        navigate("/");
+    }
+
+    function handleKick(userId: string) {
+        socket?.emit("kick_user", {
+            userId: userId,
+            username: username,
+            room: room,
+        });
     }
 
     const isTyping = useCallback(() => {
@@ -218,7 +251,7 @@ export default function ChatRoom() {
             <div className="w-1/4 p-4 border-l">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl font-bold">
-                        Users: {usersInRoom.length}
+                        Users: {usersInRoom?.users.length}
                     </h2>
                     <Button
                         onClick={handleLeaveRoom}
@@ -230,21 +263,52 @@ export default function ChatRoom() {
                 </div>
                 <div className="border-t p-2 pt-3 xl:h-[500px] overflow-auto">
                     <div className="space-y-2">
-                        {usersInRoom.map((user, index) => (
+                        {usersInRoom?.users.map((user, index) => (
                             <Card key={index}>
                                 <CardBody>
-                                    <div className="flex gap-2">
-                                        <Avatar className="w-6 h-6" />
-                                        <h3 className="flex items-center justify-center font-bold">
-                                            {user.role === "ADMIN" && (
-                                                <>
-                                                    <span className="mr-1">
-                                                        👑
-                                                    </span>
-                                                </>
-                                            )}
-                                            {user.username}
-                                        </h3>
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex items-center justify-center gap-2">
+                                            <Avatar className="w-6 h-6" />
+                                            <h3 className="font-bold">
+                                                {user.role === "ADMIN" && (
+                                                    <>
+                                                        <span className="mr-1">
+                                                            👑
+                                                        </span>
+                                                    </>
+                                                )}
+                                                {user.username}
+                                            </h3>
+                                        </div>
+                                        <div>
+                                            {role === "ADMIN" &&
+                                                user.role !== "ADMIN" && (
+                                                    <Dropdown>
+                                                        <DropdownTrigger>
+                                                            <Button
+                                                                variant="light"
+                                                                isIconOnly
+                                                            >
+                                                                <MoreHorizontal />
+                                                            </Button>
+                                                        </DropdownTrigger>
+                                                        <DropdownMenu aria-label="Static Actions">
+                                                            <DropdownItem
+                                                                key="delete"
+                                                                className="text-danger"
+                                                                color="danger"
+                                                                onClick={() => {
+                                                                    handleKick(
+                                                                        user.id
+                                                                    );
+                                                                }}
+                                                            >
+                                                                Kick
+                                                            </DropdownItem>
+                                                        </DropdownMenu>
+                                                    </Dropdown>
+                                                )}
+                                        </div>
                                     </div>
                                 </CardBody>
                             </Card>

@@ -24,6 +24,11 @@ export default function JoinRoom() {
     function joinRoom() {
         if (username !== "" && room !== "") {
             socket?.emit("join_room", { username, room });
+            // const expirationTime = Date.now() + 10 * 60 * 1000;
+            localStorage.setItem(
+                "data",
+                JSON.stringify({ id: socket?.id, ban: false, role: "USER" })
+            );
             navigate(`/chat-room/chat?user=${username}&room=${room}`);
         }
     }

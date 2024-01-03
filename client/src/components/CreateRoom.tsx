@@ -36,6 +36,13 @@ export default function JoinRoom() {
         if (username !== "") {
             const room = generateRoomId(15);
             socket?.emit("create_room", { username, room });
+            localStorage.setItem(
+                "data",
+                JSON.stringify({
+                    id: socket?.id,
+                    role: "ADMIN",
+                })
+            );
             navigate(`/chat-room/chat?user=${username}&room=${room}`);
         }
     }
