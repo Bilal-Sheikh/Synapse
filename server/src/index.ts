@@ -133,12 +133,22 @@ io.on("connection", (socket) => {
         const { userId, username, room } = data;
         if (userId) {
             // users = removeUser(userId, users);
-            leaveRoom(room, userId);
 
-            socket.to(room).emit("users_in_Room", usersInRoom);
-            socket.to(room).emit("kicked", {
-                message: "You have been kicked from the room.",
-            });
+            const clientSocket = io.sockets.sockets.get(userId);
+            // console.log("Client socket: ", clientSocket);
+
+            if (clientSocket) {
+                leaveRoom(room, userId);
+
+                socket.to(room).emit("kicked", { userId, username, room });
+                socket.to(room).emit("users_in_Room", usersInRoom);
+                socket.emit("users_in_Room", usersInRoom);
+
+                clientSocket.disconnect(true);
+                console.log("Disconnected client: " + userId);
+            } else {
+                console.log("Client not found");
+            }
         }
     });
 

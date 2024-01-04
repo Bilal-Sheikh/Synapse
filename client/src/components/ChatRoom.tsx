@@ -112,8 +112,11 @@ export default function ChatRoom() {
         });
 
         socket.on("kicked", (data) => {
-            toast(data.message);
-            navigate("/");
+            const { userId, username, room } = data;
+            if (userId === socket.id) {
+                toast(`You have been kicked from the room by ${username}.`);
+                navigate("/");
+            }
         });
 
         return () => {
