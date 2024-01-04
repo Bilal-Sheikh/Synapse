@@ -30,7 +30,7 @@ interface User {
 }
 
 interface UsersInRoom {
-    room: string;
+    roomId: string;
     users: User[];
 }
 
@@ -58,12 +58,13 @@ function removeUser(userId: string, roomUsers: User[]) {
     return roomUsers.filter((user) => user.id !== userId);
 }
 
-function leaveRoom(room: string, userId: string) {
-    usersInRoom = usersInRoom.map((roomid) => {
-        if (roomid.room === room) {
-            roomid.users = removeUser(userId, roomid.users);
+function leaveRoom(roomId: string, userId: string) {
+    usersInRoom = usersInRoom.map((room) => {
+        if (room.roomId === roomId) {
+            room.users = removeUser(userId, room.users);
+            users = removeUser(userId, users);
         }
-        return roomid;
+        return room;
     });
 }
 
@@ -78,12 +79,13 @@ io.on("connection", (socket) => {
 
         users.push({ id: socket.id, username, room, role: ROLE.USER });
         // usersInRoom = users.filter((user) => user.room === room);
+
         usersInRoom = users.reduce((acc, user) => {
-            const existingRoom = acc.find((room) => room.room === user.room);
+            const existingRoom = acc.find((room) => room.roomId === user.room);
             if (existingRoom) {
                 existingRoom.users.push(user);
             } else {
-                acc.push({ room: user.room, users: [user] });
+                acc.push({ roomId: user.room, users: [user] });
             }
             return acc;
         }, [] as UsersInRoom[]);
@@ -91,8 +93,8 @@ io.on("connection", (socket) => {
         socket.to(room).emit("users_in_Room", usersInRoom);
         socket.emit("users_in_Room", usersInRoom);
 
-        // console.log("USERSIN ROOM:::::::::::", usersInRoom);
-        // console.log("USERSSSSSSSSS:::::::::::", users);
+        console.log("USERSIN ROOM:::::::::::", usersInRoom);
+        console.log("USERSSSSSSSSS:::::::::::", users);
     });
 
     socket.on("create_room", (data) => {
@@ -104,11 +106,11 @@ io.on("connection", (socket) => {
         users.push({ id: socket.id, username, room, role: ROLE.ADMIN });
         // usersInRoom = users.filter((user) => user.room === room);
         usersInRoom = users.reduce((acc, user) => {
-            const existingRoom = acc.find((room) => room.room === user.room);
+            const existingRoom = acc.find((room) => room.roomId === user.room);
             if (existingRoom) {
                 existingRoom.users.push(user);
             } else {
-                acc.push({ room: user.room, users: [user] });
+                acc.push({ roomId: user.room, users: [user] });
             }
             return acc;
         }, [] as UsersInRoom[]);
@@ -129,29 +131,22 @@ io.on("connection", (socket) => {
 
     socket.on("kick_user", (data) => {
         const { userId, username, room } = data;
-        users = removeUser(userId, users);
-        socket.to(room).emit("users_in_Room", users);
-        socket.to(room).emit("recieve_message", {
-            username: BOT,
-            message: `${username} has been kicked from the room.`,
-            time: Date.now(),
-        });
-        socket.to(room).emit("kicked", {
-            message: "You have been kicked from the room.",
-        });
+        if (userId) {
+            // users = removeUser(userId, users);
+            leaveRoom(room, userId);
+
+            socket.to(room).emit("users_in_Room", usersInRoom);
+            socket.to(room).emit("kicked", {
+                message: "You have been kicked from the room.",
+            });
+        }
     });
 
     socket.on("leave_room", (data) => {
         const { userId, username, room } = data;
 
-        // usersInRoom = usersInRoom.map((roomid) => {
-        //     if (roomid.room === room) {
-        //         roomid.users = removeUser(userId, roomid.users);
-        //     }
-        //     return roomid;
-        // });
-        socket.leave(room);
         leaveRoom(room, userId);
+        socket.leave(room);
 
         socket.to(room).emit("users_in_Room", usersInRoom);
         socket.to(room).emit("recieve_message", {
@@ -168,7 +163,6 @@ io.on("connection", (socket) => {
             leaveRoom(user.room, user.id);
 
             socket.to(user.room).emit("users_in_Room", usersInRoom);
-
             socket.to(user.room).emit("recieve_message", {
                 username: BOT,
                 message: `${user.username} has disconnected from the chat.`,

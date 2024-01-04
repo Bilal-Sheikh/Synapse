@@ -25,7 +25,7 @@ interface Users {
 }
 
 interface UsersInRoom {
-    room: string;
+    roomId: string;
     users: Users[];
 }
 
@@ -101,7 +101,9 @@ export default function ChatRoom() {
         });
 
         socket.on("users_in_Room", (data: UsersInRoom[]) => {
-            const currentRoom = data.find((roomid) => roomid.room === room);
+            const currentRoom = data.find(
+                (currRoom) => currRoom.roomId === room
+            );
             setUsersInRoom(currentRoom);
         });
 
@@ -118,6 +120,7 @@ export default function ChatRoom() {
             socket.off("recieve_message");
             socket.off("users_in_Room");
             socket.off("user_typing");
+            socket.off("kicked");
         };
     }, [socket]);
 
