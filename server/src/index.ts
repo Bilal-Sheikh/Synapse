@@ -78,7 +78,6 @@ io.on("connection", (socket) => {
         sendWelcome(socket, username);
 
         users.push({ id: socket.id, username, room, role: ROLE.USER });
-        // usersInRoom = users.filter((user) => user.room === room);
 
         usersInRoom = users.reduce((acc, user) => {
             const existingRoom = acc.find((room) => room.roomId === user.room);
@@ -93,8 +92,8 @@ io.on("connection", (socket) => {
         socket.to(room).emit("users_in_Room", usersInRoom);
         socket.emit("users_in_Room", usersInRoom);
 
-        console.log("USERSIN ROOM:::::::::::", usersInRoom);
-        console.log("USERSSSSSSSSS:::::::::::", users);
+        // console.log("USERSIN ROOM:::::::::::", usersInRoom);
+        // console.log("USERSSSSSSSSS:::::::::::", users);
     });
 
     socket.on("create_room", (data) => {
@@ -104,7 +103,7 @@ io.on("connection", (socket) => {
         sendWelcome(socket, username);
 
         users.push({ id: socket.id, username, room, role: ROLE.ADMIN });
-        // usersInRoom = users.filter((user) => user.room === room);
+
         usersInRoom = users.reduce((acc, user) => {
             const existingRoom = acc.find((room) => room.roomId === user.room);
             if (existingRoom) {
@@ -132,8 +131,6 @@ io.on("connection", (socket) => {
     socket.on("kick_user", (data) => {
         const { userId, username, room } = data;
         if (userId) {
-            // users = removeUser(userId, users);
-
             const clientSocket = io.sockets.sockets.get(userId);
             // console.log("Client socket: ", clientSocket);
 
@@ -169,7 +166,6 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         const user = users.find((user) => user.id == socket.id);
         if (user) {
-            // users = removeUser(socket.id, users);
             leaveRoom(user.room, user.id);
 
             socket.to(user.room).emit("users_in_Room", usersInRoom);

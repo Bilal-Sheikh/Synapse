@@ -7,13 +7,18 @@ import {
     Button,
     useDisclosure,
     Input,
-    Link,
 } from "@nextui-org/react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../providers/SocketContext";
 
-export default function JoinRoom() {
+export default function CreateRoom({
+    buttonText,
+    buttonSize,
+}: {
+    buttonText?: string;
+    buttonSize?: "sm" | "md" | "lg";
+}) {
     const navigate = useNavigate();
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const socket = useContext(SocketContext);
@@ -51,12 +56,12 @@ export default function JoinRoom() {
         <div>
             <Button
                 onPress={onOpen}
-                as={Link}
                 color="primary"
-                href="#"
-                variant="flat"
+                variant="solid"
+                className="rounded-full"
+                size={buttonSize}
             >
-                Create Room
+                {buttonText || "Create Room"}
             </Button>
             <Modal
                 isOpen={isOpen}

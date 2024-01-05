@@ -1,4 +1,4 @@
-import { Moon, SunMedium } from "lucide-react";
+import { Menu, Moon, SunMedium } from "lucide-react";
 import {
     Navbar,
     NavbarBrand,
@@ -11,6 +11,12 @@ import JoinRoom from "./JoinRoom";
 import { useLocation, useSearchParams } from "react-router-dom";
 import CreateRoom from "./CreateRoom";
 import { Snippet } from "@nextui-org/react";
+import {
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
+} from "@nextui-org/react";
 
 interface NavbarProps {
     setTheme: (theme: string) => void;
@@ -22,8 +28,8 @@ export default function App({ setTheme }: NavbarProps) {
     const { pathname } = location;
 
     return (
-        <Navbar className="sticky border-b">
-            <NavbarBrand className="absolute -left-28">
+        <Navbar className="sticky">
+            <NavbarBrand className="absolute md:-left-20 lg:-left-24">
                 <Link
                     className="text-2xl font-bold"
                     color="foreground"
@@ -34,7 +40,7 @@ export default function App({ setTheme }: NavbarProps) {
             </NavbarBrand>
             <NavbarContent justify="end">
                 <NavbarItem>
-                    <div className="flex items-center gap-2">
+                    <div className="hidden md:flex items-center gap-2">
                         <Button
                             isIconOnly
                             variant={
@@ -69,19 +75,36 @@ export default function App({ setTheme }: NavbarProps) {
 
                 {pathname !== "/chat-room/chat" ? (
                     <>
-                        <NavbarItem>
-                            <JoinRoom />
-                        </NavbarItem>
-                        <NavbarItem>
-                            <CreateRoom />
+                        <NavbarItem className="flex gap-2">
+                            <JoinRoom buttonSize="md" />
+                            <CreateRoom buttonSize="md" />
                         </NavbarItem>
                     </>
                 ) : (
                     <>
-                        <NavbarItem className="p-10">
+                        <NavbarItem className="hidden gap-4 md:flex">
                             <Snippet color="primary" symbol="Room ID:">
                                 {searchParams.get("room")}
                             </Snippet>
+                        </NavbarItem>
+                        <NavbarItem className="flex md:hidden">
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Button variant="light" isIconOnly>
+                                        <Menu />
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu aria-label="Static Actions">
+                                    <DropdownItem key="snippet">
+                                        <Snippet
+                                            color="primary"
+                                            symbol="Room ID:"
+                                        >
+                                            {searchParams.get("room")}
+                                        </Snippet>
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
                         </NavbarItem>
                     </>
                 )}

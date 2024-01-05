@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import ChatRoom from "./components/ChatRoom";
 import io from "socket.io-client";
 import { Toaster } from "sonner";
+import Landing from "./components/Landing";
 
 export default function App() {
     const [theme, setTheme] = useState(localStorage.getItem("theme"));
@@ -19,11 +20,25 @@ export default function App() {
                         : "light text-foreground bg-background"
                 }`}
             >
-                <div className="min-h-screen">
+                {/* <div className="min-h-screen">
                     <Router>
-                        <Toaster position="top-center"  />
+                        <Toaster position="top-center" />
                         <Navbar setTheme={setTheme} />
                         <Routes>
+                            <Route path="/" element={<Landing />} />
+                            <Route
+                                path="/chat-room/:chat"
+                                element={<ChatRoom />}
+                            />
+                        </Routes>
+                    </Router>
+                </div> */}
+                <div className="min-h-screen">
+                    <Router>
+                        <Toaster position="top-center" />
+                        <Navbar setTheme={setTheme} />
+                        <Routes>
+                            <Route path="/" element={<Landing />} />
                             <Route
                                 path="/chat-room/:chat"
                                 element={<ChatRoom />}

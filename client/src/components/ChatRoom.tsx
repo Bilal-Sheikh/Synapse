@@ -43,7 +43,6 @@ export default function ChatRoom() {
 
     const ref = useRef<HTMLDivElement>(null);
     const [isScrollingUp, setIsScrollingUp] = useState(false);
-    // console.log(isScrollingUp);
 
     const [searchParams] = useSearchParams();
     const username = searchParams.get("user");
@@ -52,15 +51,14 @@ export default function ChatRoom() {
     const [incomingMessages, setIncomingMessages] = useState<Message[]>([]);
     const [outgoingMessage, setOutgoingMessage] = useState("");
     const [usersInRoom, setUsersInRoom] = useState<UsersInRoom>();
-    console.log("USERS:::::", usersInRoom);
 
     const [typingUser, setTypingUser] = useState("");
     setTimeout(() => {
         setTypingUser("");
     }, 5000);
 
-    // console.log("USERS::::::::::::::::::::::::::::", usersInRoom);
-    // console.log("MESSAGES::::::::::::::::::::::::::::", incomingMessages);
+    // console.log("USERS:::::::::::::::::::", usersInRoom);
+    // console.log("MESSAGES::::::::::::::::", incomingMessages);
 
     useEffect(() => {
         const observer = new IntersectionObserver(([entry]) => {
@@ -112,7 +110,7 @@ export default function ChatRoom() {
         });
 
         socket.on("kicked", (data) => {
-            const { userId, username, room } = data;
+            const { userId, username } = data;
             if (userId === socket.id) {
                 toast(`You have been kicked from the room by ${username}.`);
                 navigate("/");
@@ -176,152 +174,155 @@ export default function ChatRoom() {
     }, []);
 
     return (
-        <div className="flex xl:h-[540px] w-full">
-            <div className="flex flex-col w-3/4">
-                <div className="flex-grow overflow-auto p-4">
-                    {incomingMessages.map((message, index) => (
-                        <div ref={ref} key={index}>
-                            {message.username === username ? (
-                                <div className="flex items-end gap-2 justify-end pt-4">
-                                    <div className="rounded-lg bg-blue-500 text-white p-2">
-                                        <div className="flex justify-between text-xs pb-1">
-                                            <p className="mr-2 font-bold border-b">
-                                                {message.username}
-                                            </p>
-                                            <p>{formatTime(message.time)}</p>
-                                        </div>
-                                        <div className="max-w-2xl">
-                                            <p className="text-sm overflow-hidden">
-                                                {message.message}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="flex items-end gap-2 pt-4">
-                                    <div className="rounded-lg bg-zinc-200 dark:bg-zinc-700 p-2">
-                                        <div className="flex justify-between text-xs pb-1">
-                                            <p className="mr-2 font-bold border-b">
-                                                {message.username}
-                                            </p>
-                                            <p>{formatTime(message.time)}</p>
-                                        </div>
-                                        <div className="max-w-2xl">
-                                            <p className="text-sm overflow-hidden">
-                                                {message.message}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
+        // <div className="flex xl:h-[540px] w-full">
+        //     <div className="flex flex-col w-3/4">
+        //         <div className="flex-grow overflow-auto p-4">
+        //             {incomingMessages.map((message, index) => (
+        //                 <div ref={ref} key={index}>
+        //                     {message.username === username ? (
+        //                         <div className="flex items-end gap-2 justify-end pt-4">
+        //                             <div className="rounded-lg bg-blue-500 text-white p-2">
+        //                                 <div className="flex justify-between text-xs pb-1">
+        //                                     <p className="mr-2 font-bold border-b">
+        //                                         {message.username}
+        //                                     </p>
+        //                                     <p>{formatTime(message.time)}</p>
+        //                                 </div>
+        //                                 <div className="max-w-2xl">
+        //                                     <p className="text-sm overflow-hidden">
+        //                                         {message.message}
+        //                                     </p>
+        //                                 </div>
+        //                             </div>
+        //                         </div>
+        //                     ) : (
+        //                         <div className="flex items-end gap-2 pt-4">
+        //                             <div className="rounded-lg bg-zinc-200 dark:bg-zinc-700 p-2">
+        //                                 <div className="flex justify-between text-xs pb-1">
+        //                                     <p className="mr-2 font-bold border-b">
+        //                                         {message.username}
+        //                                     </p>
+        //                                     <p>{formatTime(message.time)}</p>
+        //                                 </div>
+        //                                 <div className="max-w-2xl">
+        //                                     <p className="text-sm overflow-hidden">
+        //                                         {message.message}
+        //                                     </p>
+        //                                 </div>
+        //                             </div>
+        //                         </div>
+        //                     )}
+        //                 </div>
+        //             ))}
+        //         </div>
 
-                <div className="w-3/4 fixed bottom-0 bg-background p-5">
-                    <div className="absolute -top-20 left-1/2">
-                        {isScrollingUp && (
-                            <Button
-                                isIconOnly
-                                className="relative -left-1/2 rounded-full"
-                                onClick={handleScrollDown}
-                            >
-                                <ArrowDown size={17} />
-                            </Button>
-                        )}
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <Input
-                            placeholder="Type your message here"
-                            onChange={(e) => {
-                                setOutgoingMessage(e.target.value);
-                                isTyping();
-                            }}
-                            value={outgoingMessage}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    sendMessage();
-                                }
-                            }}
-                        />
-                        <Button onClick={sendMessage}>Send</Button>
-                    </div>
-                    {typingUser && (
-                        <p className="text-base mt-2 italic">
-                            {typingUser} is typing...
-                        </p>
-                    )}
-                </div>
-            </div>
+        //         <div className="w-3/4 fixed bottom-0 bg-background p-5">
+        //             <div className="absolute -top-20 left-1/2">
+        //                 {isScrollingUp && (
+        //                     <Button
+        //                         isIconOnly
+        //                         className="relative -left-1/2 rounded-full"
+        //                         onClick={handleScrollDown}
+        //                     >
+        //                         <ArrowDown size={17} />
+        //                     </Button>
+        //                 )}
+        //             </div>
+        //             <div className="flex items-center space-x-2">
+        //                 <Input
+        //                     placeholder="Type your message here"
+        //                     onChange={(e) => {
+        //                         setOutgoingMessage(e.target.value);
+        //                         isTyping();
+        //                     }}
+        //                     value={outgoingMessage}
+        //                     onKeyDown={(e) => {
+        //                         if (e.key === "Enter") {
+        //                             sendMessage();
+        //                         }
+        //                     }}
+        //                 />
+        //                 <Button onClick={sendMessage}>Send</Button>
+        //             </div>
+        //             {typingUser && (
+        //                 <p className="text-base mt-2 italic">
+        //                     {typingUser} is typing...
+        //                 </p>
+        //             )}
+        //         </div>
+        //     </div>
 
-            <div className="w-1/4 p-4 border-l">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-2xl font-bold">
-                        Users: {usersInRoom?.users.length}
-                    </h2>
-                    <Button
-                        onClick={handleLeaveRoom}
-                        variant="solid"
-                        color="danger"
-                    >
-                        Leave
-                    </Button>
-                </div>
-                <div className="border-t p-2 pt-3 xl:h-[500px] overflow-auto">
-                    <div className="space-y-2">
-                        {usersInRoom?.users.map((user, index) => (
-                            <Card key={index}>
-                                <CardBody>
-                                    <div className="flex justify-between items-center">
-                                        <div className="flex items-center justify-center gap-2">
-                                            <Avatar className="w-6 h-6" />
-                                            <h3 className="font-bold">
-                                                {user.role === "ADMIN" && (
-                                                    <>
-                                                        <span className="mr-1">
-                                                            👑
-                                                        </span>
-                                                    </>
-                                                )}
-                                                {user.username}
-                                            </h3>
-                                        </div>
-                                        <div>
-                                            {role === "ADMIN" &&
-                                                user.role !== "ADMIN" && (
-                                                    <Dropdown>
-                                                        <DropdownTrigger>
-                                                            <Button
-                                                                variant="light"
-                                                                isIconOnly
-                                                            >
-                                                                <MoreHorizontal />
-                                                            </Button>
-                                                        </DropdownTrigger>
-                                                        <DropdownMenu aria-label="Static Actions">
-                                                            <DropdownItem
-                                                                key="delete"
-                                                                className="text-danger"
-                                                                color="danger"
-                                                                onClick={() => {
-                                                                    handleKick(
-                                                                        user.id
-                                                                    );
-                                                                }}
-                                                            >
-                                                                Kick
-                                                            </DropdownItem>
-                                                        </DropdownMenu>
-                                                    </Dropdown>
-                                                )}
-                                        </div>
-                                    </div>
-                                </CardBody>
-                            </Card>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </div>
+        //     <div className="w-1/4 p-4 border-l">
+        //         <div className="flex justify-between items-center mb-4">
+        //             <h2 className="text-2xl font-bold">
+        //                 Users: {usersInRoom?.users.length}
+        //             </h2>
+        //             <Button
+        //                 onClick={handleLeaveRoom}
+        //                 variant="solid"
+        //                 color="danger"
+        //             >
+        //                 Leave
+        //             </Button>
+        //         </div>
+        //         <div className="border-t p-2 pt-3 xl:h-[500px] overflow-auto">
+        //             <div className="space-y-2">
+        //                 {usersInRoom?.users.map((user, index) => (
+        //                     <Card key={index}>
+        //                         <CardBody>
+        //                             <div className="flex justify-between items-center">
+        //                                 <div className="flex items-center justify-center gap-2">
+        //                                     <Avatar className="w-6 h-6" />
+        //                                     <h3 className="font-bold">
+        //                                         {user.role === "ADMIN" && (
+        //                                             <>
+        //                                                 <span className="mr-1">
+        //                                                     👑
+        //                                                 </span>
+        //                                             </>
+        //                                         )}
+        //                                         {user.username}
+        //                                     </h3>
+        //                                 </div>
+        //                                 <div>
+        //                                     {role === "ADMIN" &&
+        //                                         user.role !== "ADMIN" && (
+        //                                             <Dropdown>
+        //                                                 <DropdownTrigger>
+        //                                                     <Button
+        //                                                         variant="light"
+        //                                                         isIconOnly
+        //                                                     >
+        //                                                         <MoreHorizontal />
+        //                                                     </Button>
+        //                                                 </DropdownTrigger>
+        //                                                 <DropdownMenu aria-label="Static Actions">
+        //                                                     <DropdownItem
+        //                                                         key="delete"
+        //                                                         className="text-danger"
+        //                                                         color="danger"
+        //                                                         onClick={() => {
+        //                                                             handleKick(
+        //                                                                 user.id
+        //                                                             );
+        //                                                         }}
+        //                                                     >
+        //                                                         Kick
+        //                                                     </DropdownItem>
+        //                                                 </DropdownMenu>
+        //                                             </Dropdown>
+        //                                         )}
+        //                                 </div>
+        //                             </div>
+        //                         </CardBody>
+        //                     </Card>
+        //                 ))}
+        //             </div>
+        //         </div>
+        //     </div>
+        // </div>
+
+
+        <div></div>
     );
 }
