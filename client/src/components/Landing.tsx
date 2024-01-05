@@ -1,6 +1,7 @@
 import { Link } from "@nextui-org/react";
-import chattingMedium from "../../public/chatting_medium.jpg";
+import chattingMedium from "../../src/chatting_medium.jpg";
 import CreateRoom from "./CreateRoom";
+import JoinRoom from "./JoinRoom";
 
 export default function Landing() {
     return (
@@ -18,7 +19,15 @@ export default function Landing() {
                                 app. Share messages in real-time. <br />
                                 No sign up required!
                             </p>
-                            <div className="space-x-4 py-4">
+                            <div className="flex md:hidden space-x-4 py-4">
+                                <div>
+                                    <CreateRoom />
+                                </div>
+                                <div>
+                                    <JoinRoom />
+                                </div>
+                            </div>
+                            <div className="hidden md:flex space-x-4 py-4">
                                 <CreateRoom buttonText="Get Started" />
                             </div>
                         </div>
@@ -83,12 +92,13 @@ export default function Landing() {
                     </div>
                 </div>
             </section>
-            <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6">
+            <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-40">
                 <p className="text-base text-gray-500 dark:text-gray-400">
                     © Synapse. All rights reserved.
                 </p>
                 <nav className="sm:ml-auto flex gap-4 sm:gap-6">
                     <Link
+                        underline="always"
                         className="text-base hover:underline underline-offset-4 text-gray-900 dark:text-gray-100"
                         href="https://github.com/Bilal-Sheikh/Synapse"
                         target="_blank"
@@ -96,6 +106,7 @@ export default function Landing() {
                         Github
                     </Link>
                     <Link
+                        underline="always"
                         className="text-base hover:underline underline-offset-4 text-gray-900 dark:text-gray-100"
                         href="https://bilal-sheikh-portfolio.vercel.app/"
                         target="_blank"
@@ -103,6 +114,7 @@ export default function Landing() {
                         Build By
                     </Link>
                     <Link
+                        underline="always"
                         className="text-base hover:underline underline-offset-4 text-gray-900 dark:text-gray-100"
                         href="https://socket.io/"
                         target="_blank"
@@ -110,6 +122,7 @@ export default function Landing() {
                         Socket.IO
                     </Link>
                     <Link
+                        underline="always"
                         className="text-base hover:underline underline-offset-4 text-gray-900 dark:text-gray-100"
                         href="https://nextui.org/"
                         target="_blank"

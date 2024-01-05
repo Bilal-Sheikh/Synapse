@@ -39,72 +39,54 @@ export default function App({ setTheme }: NavbarProps) {
                 </Link>
             </NavbarBrand>
             <NavbarContent justify="end">
-                <NavbarItem>
-                    <div className="hidden md:flex items-center gap-2">
-                        <Button
-                            isIconOnly
-                            variant={
-                                localStorage.getItem("theme") === "dark"
-                                    ? "bordered"
-                                    : "solid"
-                            }
-                            onClick={() => {
-                                setTheme("light");
-                                localStorage.setItem("theme", "light");
-                            }}
-                        >
-                            <SunMedium size={17} />
-                        </Button>
-
-                        <Button
-                            isIconOnly
-                            variant={
-                                localStorage.getItem("theme") === "dark"
-                                    ? "solid"
-                                    : "bordered"
-                            }
-                            onClick={() => {
-                                setTheme("dark");
-                                localStorage.setItem("theme", "dark");
-                            }}
-                        >
-                            <Moon size={17} />
-                        </Button>
-                    </div>
+                <NavbarItem className="flex items-center gap-2 mr-20 md:mr-0">
+                    <Button
+                        isIconOnly
+                        variant={
+                            localStorage.getItem("theme") === "dark"
+                                ? "bordered"
+                                : "solid"
+                        }
+                        onClick={() => {
+                            setTheme("light");
+                            localStorage.setItem("theme", "light");
+                        }}
+                    >
+                        <SunMedium size={17} />
+                    </Button>
+                    <Button
+                        isIconOnly
+                        variant={
+                            localStorage.getItem("theme") === "dark"
+                                ? "solid"
+                                : "bordered"
+                        }
+                        onClick={() => {
+                            setTheme("dark");
+                            localStorage.setItem("theme", "dark");
+                        }}
+                    >
+                        <Moon size={17} />
+                    </Button>
                 </NavbarItem>
 
                 {pathname !== "/chat-room/chat" ? (
                     <>
-                        <NavbarItem className="flex gap-2">
-                            <JoinRoom buttonSize="md" />
-                            <CreateRoom buttonSize="md" />
+                        <NavbarItem className="hidden md:flex gap-2">
+                            <JoinRoom />
+                            <CreateRoom />
                         </NavbarItem>
                     </>
                 ) : (
                     <>
-                        <NavbarItem className="hidden gap-4 md:flex">
-                            <Snippet color="primary" symbol="Room ID:">
+                        <NavbarItem className="hidden md:flex gap-2">
+                            <Snippet
+                                color="primary"
+                                symbol="Room ID:"
+                                size="sm"
+                            >
                                 {searchParams.get("room")}
                             </Snippet>
-                        </NavbarItem>
-                        <NavbarItem className="flex md:hidden">
-                            <Dropdown>
-                                <DropdownTrigger>
-                                    <Button variant="light" isIconOnly>
-                                        <Menu />
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu aria-label="Static Actions">
-                                    <DropdownItem key="snippet">
-                                        <Snippet
-                                            color="primary"
-                                            symbol="Room ID:"
-                                        >
-                                            {searchParams.get("room")}
-                                        </Snippet>
-                                    </DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
                         </NavbarItem>
                     </>
                 )}

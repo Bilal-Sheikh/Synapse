@@ -20,19 +20,6 @@ export default function App() {
                         : "light text-foreground bg-background"
                 }`}
             >
-                {/* <div className="min-h-screen">
-                    <Router>
-                        <Toaster position="top-center" />
-                        <Navbar setTheme={setTheme} />
-                        <Routes>
-                            <Route path="/" element={<Landing />} />
-                            <Route
-                                path="/chat-room/:chat"
-                                element={<ChatRoom />}
-                            />
-                        </Routes>
-                    </Router>
-                </div> */}
                 <div className="min-h-screen">
                     <Router>
                         <Toaster position="top-center" />

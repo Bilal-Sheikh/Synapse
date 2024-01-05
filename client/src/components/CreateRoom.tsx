@@ -66,7 +66,7 @@ export default function CreateRoom({
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
-                placement="top-center"
+                placement="center"
             >
                 <ModalContent>
                     {(onClose) => (
