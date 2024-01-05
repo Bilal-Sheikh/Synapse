@@ -1,4 +1,4 @@
-import { Menu, Moon, SunMedium } from "lucide-react";
+import { Moon, SunMedium } from "lucide-react";
 import {
     Navbar,
     NavbarBrand,
@@ -11,12 +11,6 @@ import JoinRoom from "./JoinRoom";
 import { useLocation, useSearchParams } from "react-router-dom";
 import CreateRoom from "./CreateRoom";
 import { Snippet } from "@nextui-org/react";
-import {
-    Dropdown,
-    DropdownTrigger,
-    DropdownMenu,
-    DropdownItem,
-} from "@nextui-org/react";
 
 interface NavbarProps {
     setTheme: (theme: string) => void;
