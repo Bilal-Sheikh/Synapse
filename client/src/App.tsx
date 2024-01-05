@@ -8,8 +8,9 @@ import { Toaster } from "sonner";
 import Landing from "./components/Landing";
 
 export default function App() {
+    const BE_URL = import.meta.env.VITE_BE_URL;
     const [theme, setTheme] = useState(localStorage.getItem("theme"));
-    const socket = io("http://localhost:3000");
+    const socket = io(BE_URL);
 
     return (
         <SocketContext.Provider value={socket}>
