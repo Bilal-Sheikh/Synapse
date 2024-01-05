@@ -9,11 +9,12 @@ const http_1 = require("http");
 const socket_io_1 = require("socket.io");
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
-app.use((0, cors_1.default)());
+let FE_URL = process.env.FE_URL;
+app.use((0, cors_1.default)({ origin: FE_URL }));
 const server = (0, http_1.createServer)(app);
 const io = new socket_io_1.Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: FE_URL,
     },
 });
 const BOT = "🤖 BOT";

@@ -5,14 +5,13 @@ import { Server, Socket } from "socket.io";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const FE_URL = process.env.FE_URL;
 app.use(cors());
 
 const server = createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: FE_URL,
+        origin: "http://localhost:5173",
     },
 });
 
