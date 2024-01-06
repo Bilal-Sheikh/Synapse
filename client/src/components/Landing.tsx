@@ -2,6 +2,8 @@ import { Link } from "@nextui-org/react";
 import chattingMedium from "../../src/chatting_medium.jpg";
 import CreateRoom from "./CreateRoom";
 import JoinRoom from "./JoinRoom";
+import { Image } from "@nextui-org/react";
+import { Smartphone, Users, Zap } from "lucide-react";
 
 export default function Landing() {
     return (
@@ -10,9 +12,9 @@ export default function Landing() {
                 <div className="px-4 md:px-6 space-y-10 xl:space-y-16">
                     <div className="grid max-w-[1300px] mx-auto gap-4 px-4 sm:px-6 md:px-10 md:grid-cols-2 md:gap-16">
                         <div>
-                            <h1 className="lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem] text-gray-900 dark:text-gray-100">
+                            <span className="link link-underline link-underline-black lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem] text-gray-900 dark:text-gray-100">
                                 Real-time chat for everyone, everywhere
-                            </h1>
+                            </span>
                             <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl pt-6 dark:text-gray-400">
                                 Connect with your friends, family, and
                                 colleagues instantly with our user-friendly chat
@@ -32,12 +34,12 @@ export default function Landing() {
                             </div>
                         </div>
                         <div>
-                            <img
+                            <Image
                                 alt="Chat App"
                                 className="mx-auto aspect-[1/1] overflow-hidden rounded-xl object-cover"
-                                height="500"
+                                width={500}
+                                height={500}
                                 src={chattingMedium}
-                                width="500"
                             />
                         </div>
                     </div>
@@ -60,33 +62,48 @@ export default function Landing() {
                             </p>
                         </div>
                     </div>
-                    <div className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-2 md:gap-12 lg:max-w-5xl lg:grid-cols-3">
-                        <div className="grid gap-1">
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                    <div className="mx-auto grid items-center gap-8 sm:max-w-4xl sm:grid-cols-2 md:gap-12 lg:max-w-5xl lg:grid-cols-3">
+                        <div className="grid place-items-center gap-1">
+                            <Zap
+                                size={50}
+                                strokeWidth="1"
+                                className="transition ease-in-out hover:-translate-y-1 hover:scale-110 hover:fill-yellow-500 duration-300 "
+                            />
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-3">
                                 Real-time Messaging
                             </h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                            <p className="text-sm text-center text-gray-500 dark:text-gray-400">
                                 Send and receive messages instantly. No more
                                 waiting for texts to load.
                             </p>
                         </div>
-                        <div className="grid gap-1">
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                        <div className="grid place-items-center gap-1">
+                            <Users
+                                size={50}
+                                strokeWidth="1"
+                                className="transition ease-in-out hover:-translate-y-1 hover:scale-110 hover:fill-green-500 duration-300 "
+                            />
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-3">
                                 Group Chats
                             </h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                Create group chats with up to 500 members.
-                                Perfect for coordinating with large teams or
-                                families.
+                            <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+                                Create group chats for perfect coordination with
+                                large teams or families.
                             </p>
                         </div>
-                        <div className="grid gap-1">
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                                Multimedia Sharing
+                        <div className="grid place-items-center gap-1 mt-8">
+                            <Smartphone
+                                size={50}
+                                strokeWidth="1"
+                                className="transition ease-in-out hover:-translate-y-1 hover:scale-110 hover:fill-blue-500 duration-300 "
+                            />
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-3">
+                                Works on any device
                             </h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                Share photos, videos, and other files with ease.
-                                You can even send voice messages!
+                            <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+                                Enjoy seamless connectivity across all your
+                                devices—stay in touch effortlessly, whether on
+                                your phone, tablet, or computer.
                             </p>
                         </div>
                     </div>

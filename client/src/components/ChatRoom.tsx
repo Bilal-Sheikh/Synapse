@@ -198,7 +198,7 @@ export default function ChatRoom() {
         <div className="flex xl:h-[540px] w-full">
             <div className="flex flex-col w-full md:w-3/4">
                 <div className="fixed top-3 left-72 z-40 block md:hidden">
-                    <Button variant="solid" isIconOnly onPress={onOpen}>
+                    <Button variant="solid" isIconOnly onClick={onOpen}>
                         <Users size={17} />
                     </Button>
 
@@ -356,8 +356,12 @@ export default function ChatRoom() {
                                 }
                             }}
                         />
-                        <Button onClick={sendMessage} variant="light" className="py-7">
-                            <SendHorizontal size={25}/>
+                        <Button
+                            onClick={sendMessage}
+                            variant="light"
+                            className="py-7"
+                        >
+                            <SendHorizontal size={25} />
                         </Button>
                     </div>
                     {typingUser && (
