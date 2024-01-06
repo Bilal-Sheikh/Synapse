@@ -80,6 +80,8 @@ export default function CreateRoom({
                                     label="Username"
                                     placeholder="Enter your username"
                                     variant="bordered"
+                                    minLength={5}
+                                    maxLength={15}
                                     onChange={(e) =>
                                         setUsername(e.target.value)
                                     }

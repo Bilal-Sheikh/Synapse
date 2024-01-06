@@ -9,7 +9,13 @@ import {
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { SocketContext } from "../providers/SocketContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowDown, LogOut, MoreHorizontal, Users } from "lucide-react";
+import {
+    ArrowDown,
+    LogOut,
+    MoreHorizontal,
+    SendHorizontal,
+    Users,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
     Dropdown,
@@ -283,6 +289,7 @@ export default function ChatRoom() {
                         </ModalContent>
                     </Modal>
                 </div>
+
                 <div className="flex-grow overflow-auto p-4 h-[500px] md:h-auto">
                     {incomingMessages.map((message, index) => (
                         <div ref={ref} key={index}>
@@ -349,7 +356,9 @@ export default function ChatRoom() {
                                 }
                             }}
                         />
-                        <Button onClick={sendMessage}>Send</Button>
+                        <Button onClick={sendMessage} variant="light" className="py-7">
+                            <SendHorizontal size={25}/>
+                        </Button>
                     </div>
                     {typingUser && (
                         <p className="text-base mt-2 italic">
