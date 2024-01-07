@@ -5,8 +5,8 @@ This is a simple chat application built in React using Socket.io for real time c
 Tech Stack : 
 
 React JS
-Node JS
-Express JS
-Socket.io
-Next UI
-Tailwind CSS
+- Node JS
+- Express JS
+- Socket.io
+- Next UI
+- Tailwind CSS
