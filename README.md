@@ -4,7 +4,7 @@ This is a simple chat application built in React using Socket.io for real time c
 
 Tech Stack : 
 
-React JS
+- React JS
 - Node JS
 - Express JS
 - Socket.io
